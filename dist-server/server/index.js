@@ -6,7 +6,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient } from '../generated/prisma/client.js';
+import { PrismaClient } from '@prisma/client';
 const databaseUrl = process.env.DATABASE_URL;
 if (!databaseUrl) {
     throw new Error('DATABASE_URL es obligatoria. Configura una URL de PostgreSQL para iniciar la aplicación.');
@@ -98,7 +98,7 @@ app.post('/api/services', requireAdmin, async (req, res) => {
     }
 });
 app.put('/api/services/:id', requireAdmin, async (req, res) => {
-    const { id } = req.params;
+    const id = String(req.params.id);
     const { name, description, price, duration, isAvailable } = req.body;
     try {
         const service = await prisma.service.update({
@@ -119,7 +119,7 @@ app.put('/api/services/:id', requireAdmin, async (req, res) => {
     }
 });
 app.delete('/api/services/:id', requireAdmin, async (req, res) => {
-    const { id } = req.params;
+    const id = String(req.params.id);
     try {
         await prisma.service.delete({ where: { id } });
         res.status(204).send();
@@ -162,7 +162,7 @@ app.post('/api/barbers', requireAdmin, async (req, res) => {
     }
 });
 app.put('/api/barbers/:id', requireAdmin, async (req, res) => {
-    const { id } = req.params;
+    const id = String(req.params.id);
     const { name, specialty, isActive } = req.body;
     try {
         const barber = await prisma.barber.update({
@@ -181,7 +181,7 @@ app.put('/api/barbers/:id', requireAdmin, async (req, res) => {
     }
 });
 app.delete('/api/barbers/:id', requireAdmin, async (req, res) => {
-    const { id } = req.params;
+    const id = String(req.params.id);
     try {
         await prisma.barber.delete({ where: { id } });
         res.status(204).send();
@@ -248,7 +248,7 @@ app.post('/api/bookings', async (req, res) => {
     return res.status(201).json({ cancelCode: booking.cancelCode, booking });
 });
 app.put('/api/bookings/:id', requireAdmin, async (req, res) => {
-    const { id } = req.params;
+    const id = String(req.params.id);
     const { barberId, barberName, status } = req.body;
     try {
         const selectedBarber = barberId ? await prisma.barber.findUnique({ where: { id: barberId } }) : null;
@@ -271,7 +271,7 @@ app.put('/api/bookings/:id', requireAdmin, async (req, res) => {
     }
 });
 app.post('/api/bookings/:id/cancel', requireAdmin, async (req, res) => {
-    const { id } = req.params;
+    const id = String(req.params.id);
     const { cancelCode } = req.body;
     const booking = await prisma.booking.findUnique({ where: { id } });
     if (!booking) {
