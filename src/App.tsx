@@ -46,7 +46,6 @@ type Summary = {
   upcomingBookings: number;
   revenueByDay: Array<{ day: string; total: number }>;
 };
-
 type BookingConfirmation = {
   cancelCode: string;
   booking: BookingRecord;
@@ -84,7 +83,15 @@ async function apiRequest<T>(url: string, options?: RequestInit): Promise<T> {
     return undefined as T;
   }
 
-  const data = JSON.parse(text) as T | { message?: string };
+  let data: T | { message?: string } | undefined;
+  try {
+    data = JSON.parse(text);
+  } catch {
+    if (!response.ok) {
+      throw new Error(`Error en el servidor (${response.status}): El servicio no está disponible.`);
+    }
+    throw new Error('La respuesta del servidor no tiene un formato válido.');
+  }
 
   if (!response.ok) {
     const message = typeof data === 'object' && data && 'message' in data ? String(data.message) : 'No se pudo completar la solicitud.';
