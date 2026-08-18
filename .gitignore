@@ -1,5 +1,30 @@
 node_modules
+
 # Keep environment variables out of version control
 .env
+.env.local
+.env.*.local
 
+# Generated Prisma client and local database
 /generated/prisma
+dev.db
+dev.db-journal
+
+# Build output and local deployment metadata
+dist
+dist-server
+.vercel
+
+# Local AI-agent configuration and analysis artifacts
+.agents
+.codex
+graphify-out
+.claude
+.cursor
+.continue
+.aider*
+
+# Logs and local editor files
+*.log
+.DS_Store
+Thumbs.db
