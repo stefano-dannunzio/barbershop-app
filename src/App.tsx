@@ -69,8 +69,11 @@ const currencyFormatter = new Intl.NumberFormat('es-AR', {
   maximumFractionDigits: 0,
 });
 
+const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+
 async function apiRequest<T>(url: string, options?: RequestInit): Promise<T> {
-  const response = await fetch(url, {
+  const fullUrl = url.startsWith('/') ? `${API_BASE}${url}` : url;
+  const response = await fetch(fullUrl, {
     headers: {
       'Content-Type': 'application/json',
       ...(options?.headers ?? {}),
@@ -299,7 +302,7 @@ function AdminPage() {
 
   useEffect(() => {
     if (!adminToken) return;
-    const events = new EventSource(`/api/admin/events?token=${encodeURIComponent(adminToken)}`);
+    const events = new EventSource(`${API_BASE}/api/admin/events?token=${encodeURIComponent(adminToken)}`);
     const refresh = () => void loadAdminData();
     events.addEventListener('booking-created', refresh);
     events.addEventListener('booking-updated', refresh);
